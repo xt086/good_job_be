@@ -1,9 +1,10 @@
+from address.models import Address
 from base.base_model import *
 from base.enum import Gender, Level
 from jobs.models import Jobs
 from major.models import Major
 # Create your models here.
-class Employee(Base):
+class Employee(models.Model):
     name = models.CharField(max_length=128, null=False)
     number = models.CharField(max_length=128, null=False)
     gender = models.CharField(
@@ -14,7 +15,7 @@ class Employee(Base):
     age = models.IntegerField(null=False,)
     email = models.EmailField(max_length=254,null=False,)
     employee_address = models.OneToOneField(Address, null=False, blank=False,
-                                           on_delete=models.CASCADE, related_name='employee_address')
+                                           on_delete=models.CASCADE)
     
 
     personal_introduction = models.CharField(max_length = 2000)
