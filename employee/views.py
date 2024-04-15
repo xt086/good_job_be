@@ -16,7 +16,7 @@ def getData(request):
 @api_view(['POST'])
 def postData(request):
     serializer = EmployeeSerializer(data=request.data)
-    
+
     if serializer.is_valid():
         
         serializer.save()

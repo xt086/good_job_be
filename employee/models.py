@@ -1,20 +1,21 @@
+from address.models import Address
 from base.base_model import *
 from base.enum import Gender, Level
 from jobs.models import Jobs
 from major.models import Major
 # Create your models here.
-class Employee(Base):
-    name = models.CharField(max_length=128, null=False)
-    number = models.CharField(max_length=128, null=False)
+class Employee(models.Model):
+    name = models.CharField(max_length=128, null=True)
+    number = models.CharField(max_length=128, null=True)
     gender = models.CharField(
         max_length = 1,
         choices=Gender.choices,
-        null=False
+        null=True
     )
-    age = models.IntegerField(null=False,)
-    email = models.EmailField(max_length=254,null=False,)
-    employee_address = models.OneToOneField(Address, null=False, blank=False,
-                                           on_delete=models.CASCADE, related_name='employee_address')
+    age = models.IntegerField(null=True,)
+    email = models.EmailField(max_length=254,null=True,)
+    employee_address = models.OneToOneField(Address, null=True, blank=False,
+                                           on_delete=models.CASCADE)
     
 
     personal_introduction = models.CharField(max_length = 2000)
@@ -22,12 +23,12 @@ class Employee(Base):
     level= models.CharField(
         max_length = 2,
         choices=Level.choices,
-        null=False
+        null=True
     )
 
-    min_salary = models.DecimalField(max_digits=3, decimal_places=1, null=False)
+    min_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
 
-    max_salary = models.DecimalField(max_digits=3, decimal_places=1, null=False)
+    max_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
 
     major = models.ManyToManyField(Major)
 
