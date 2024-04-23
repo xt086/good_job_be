@@ -3,8 +3,11 @@ from base.base_model import *
 from base.enum import Gender, Level
 from jobs.models import Jobs
 from major.models import Major
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
-class Employee(models.Model):
+class Employee(AbstractUser):
+    
+    password = models.CharField(max_length=128, null=True)
     name = models.CharField(max_length=128, null=True)
     number = models.CharField(max_length=128, null=True)
     gender = models.CharField(
@@ -13,7 +16,16 @@ class Employee(models.Model):
         null=True
     )
     age = models.IntegerField(null=True,)
-    email = models.EmailField(max_length=254,null=True,)
+    email = models.CharField(max_length=250, unique=True, blank=False)
+    REGISTRATION_CHOICES = [
+        ('username', 'Username'),
+        ('google', 'Google'),
+    ]
+    registration_method = models.CharField(
+        max_length=10,
+        choices=REGISTRATION_CHOICES,
+        default='username'
+    )
     employee_address = models.OneToOneField(Address, null=True, blank=False,
                                            on_delete=models.CASCADE)
     
