@@ -17,12 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from employee import views
-from django.views.generic import TemplateView #useful in displaying index.html template
-from django.contrib.auth.views import LogoutView
-from auth_app.views import GoogleLoginApi
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('employee/',views.postData),
-    path("auth/login/google/", GoogleLoginApi.as_view(), 
-         name="login-with-google"),
+    path("", include("auth_app.urls")),
+    path('auth/', include('djoser.social.urls')),
 ]

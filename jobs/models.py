@@ -1,3 +1,4 @@
+from address.models import Address
 from base.base_model import *
 from major.models import Major
 from base.enum import  Level
@@ -12,6 +13,8 @@ class Jobs(models.Model):
         choices=Level.choices,
         null=False
     )
+    job_address = models.OneToOneField(Address, null=False, blank=False,
+                                           on_delete=models.CASCADE)
     major = models.ManyToManyField(Major)  
 
 
