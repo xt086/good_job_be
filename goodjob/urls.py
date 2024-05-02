@@ -17,10 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from employee import views
-
+from jobs import urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('employee/',views.postData),
     path("", include("auth_app.urls")),
     path('auth/', include('djoser.social.urls')),
+    path('jobs/', include('jobs.urls')),
 ]

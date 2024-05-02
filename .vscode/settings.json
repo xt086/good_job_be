@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "goodjob",
+            "database": "${workspaceFolder:goodjob}/db.sqlite3"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
