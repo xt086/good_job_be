@@ -24,7 +24,7 @@ class Employee(AbstractUser):
     registration_method = models.CharField(
         max_length=10,
         choices=REGISTRATION_CHOICES,
-        default='username'
+        default='google'
     )
     employee_address = models.OneToOneField(Address, null=True, blank=False,
                                            on_delete=models.CASCADE)

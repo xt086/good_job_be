@@ -7,6 +7,8 @@ class Base(models.Model):
          default = uuid.uuid4, 
          editable = False,
          null=False) 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         abstract=True # Set this model as Abstract

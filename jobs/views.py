@@ -34,17 +34,30 @@ def getData(request):
     job_address = request.GET.getlist('job_address')
     
     result = None
-    print(level)
-    
+    print(keyword)
+    filter = None
         
     # app = Jobs.objects.annotate(
     #  jobs__job_address=FilteredRelation(
     #      "job_address",
     #      condition=Q(address__city=job_address),
     #  ),
-    # ).filter(jobs__name__regex=keyword, jobs__salary__lt = max_salary, jobs__salary__gt = min_salary, jobs__level = level, job__major = major)
+    # ).filter(jobs__name__contains=keyword, jobs__salary__lt = max_salary, jobs__salary__gt = min_salary, jobs__level = level, job__major = major)
+    if(keyword):
+        for word in keyword:
+            filter = filter or (Q(name__regex=word) and Q(description__regex=word))
 
-    app = Jobs.objects.filter(name__regex=keyword, description__regex=keyword, level = level)
+    if(level):
+        filter = filter and Q(level=level)
+
+    if(min_salary and max_salary):
+        filter = filter or (Q( jobs__salary__lt=min_salary) and Q(jobs__salary__gt=min_salary))
+    if(filter):
+
+        app = Jobs.objects.filter(filter)
+    else:
+        # app = []
+        app = Jobs.objects.all()
 
     serializer = JobsSerializer(app, many=True)
     return Response(serializer.data)
