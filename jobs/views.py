@@ -1,74 +1,92 @@
-from django.http import Http404
-from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework import viewsets
+from .models import *
+from .serializers import*
+# Create your views here.
 from .models import Jobs
 from .serializers import JobsSerializer
 from rest_framework import generics
 from rest_framework import filters
 
 from django.db.models import FilteredRelation, Q
-# class JobsAPIView(generics.RetrieveAPIView):
-#     # search_fields = ['name', '$description', 'level', 'major__name', 'address__city']
-#     # filter_backends = [filters.SearchFilter]
-#     # queryset = Jobs.objects.all()
-#     serializer_class = JobsSerializer
-
-#     def get_queryset(self):
-#         name = self.request.query_params.get("name", None)
-#         if not name:
-#             raise Http404
-#         return Jobs.objects.filter(email=self.kwargs["email"])
-
 
 # Create your views here.
-@api_view(['GET'])
-def getData(request):
-    
-    keyword = request.GET.getlist('keyword')
-    
-    min_salary = request.GET.get('min_salary')
-    max_salary = request.GET.get('max_salary')
-    level= request.GET.getlist('level')
-    major = request.GET.getlist('major')
-    job_address = request.GET.getlist('job_address')
-    
-    result = None
-    print(keyword)
-    filter = None
+
+class APIJobs(viewsets.ModelViewSet):
+    queryset = Jobs.objects.all()
+    serializer_class = JobsSerializer
+
+    def list(self, request, *args, **kwargs):
+        data = list(Jobs.objects.all().values())
+        return Response(data)
+
+    def retrieve(self, request, *args, **kwargs):
+        keyword = request.GET.getlist('keyword')
+
+        min_salary = request.GET.get('min_salary')
+        max_salary = request.GET.get('max_salary')
+        level= request.GET.getlist('level')
+        major = request.GET.getlist('major')
+        job_address = request.GET.getlist('job_address')
         
-    # app = Jobs.objects.annotate(
-    #  jobs__job_address=FilteredRelation(
-    #      "job_address",
-    #      condition=Q(address__city=job_address),
-    #  ),
-    # ).filter(jobs__name__contains=keyword, jobs__salary__lt = max_salary, jobs__salary__gt = min_salary, jobs__level = level, job__major = major)
-    if(keyword):
-        for word in keyword:
-            filter = filter or (Q(name__regex=word) and Q(description__regex=word))
+        result = None
+        print(keyword)
+        filter = None
 
-    if(level):
-        filter = filter and Q(level=level)
+        if(keyword):
+            for word in keyword:
+                filter = filter or (Q(name__regex=word) and Q(description__regex=word))
 
-    if(min_salary and max_salary):
-        filter = filter or (Q( jobs__salary__lt=min_salary) and Q(jobs__salary__gt=min_salary))
-    if(filter):
+        if(level):
+            filter = filter and Q(level=level)
 
-        app = Jobs.objects.filter(filter)
-    else:
-        # app = []
-        app = Jobs.objects.all()
+        if(min_salary and max_salary):
+            filter = filter or (Q( jobs__salary__lt=min_salary) and Q(jobs__salary__gt=min_salary))
+        now = datetime.now()
+        filter = filter and Q( jobs__expired_time__gt=now)
+        if(filter):
 
-    serializer = JobsSerializer(app, many=True)
-    return Response(serializer.data)
+            app = Jobs.objects.filter(filter)
+        else:
+            app = []
+            # app = Jobs.objects.all()
 
-@api_view(['POST'])
-def postData(request):
-    serializer = JobsSerializer(data=request.data)
-    print(serializer)
-    print(serializer.is_valid())
-    # if serializer.is_valid():
-        
-    serializer.save()
+        serializer = JobsSerializer(app, many=True)
+        return Response(serializer.data)
 
-    return Response(serializer.data)
+    def create(self, request, *args, **kwargs):
+        if(request.data['major']):
+            for major in request.data['major']:
+                
+        serializer_data = JobsSerializer(data=request.data)
+        print(serializer_data.is_valid())
+        if serializer_data.is_valid():
+            serializer_data.save()
+            status_code = status.HTTP_201_CREATED
+            return Response({"message": "Product Added Sucessfully", "status": status_code})
+        else:
+            status_code = status.HTTP_400_BAD_REQUEST
+            return Response({"message": "please fill the datails", "status": status_code})
+
+    def destroy(self, request, *args, **kwargs):
+        data = Jobs.objects.filter(id=kwargs['pk'])
+        if data:
+            data.delete()
+            status_code = status.HTTP_201_CREATED
+            return Response({"message": "Product delete Sucessfully", "status": status_code})
+        else:
+            status_code = status.HTTP_400_BAD_REQUEST
+            return Response({"message": "Product data not found", "status": status_code})
+
+    def update(self, request, *args, **kwargs):
+        details = Jobs.objects.get(id=kwargs['pk'])
+        serializer_data = Jobs(
+            details, data=request.data, partial=True)
+        if serializer_data.is_valid():
+            serializer_data.save()
+            status_code = status.HTTP_201_CREATED
+            return Response({"message": "Product Update Sucessfully", "status": status_code})
+        else:
+            status_code = status.HTTP_400_BAD_REQUEST
+            return Response({"message": "Product data Not found", "status": status_code})

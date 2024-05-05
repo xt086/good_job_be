@@ -7,4 +7,4 @@ class MajorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Major
-        fields = ('name')
+        fields = '__all__'

@@ -7,4 +7,4 @@ class JobsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Jobs
-        fields = ('name',  'description', 'level')
+        fields = '__all__'
