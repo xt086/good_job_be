@@ -22,18 +22,18 @@ class APIJobs(viewsets.ModelViewSet):
         return Response(data)
 
     def retrieve(self, request, *args, **kwargs):
+        id = request.GET.getlist('id')
         keyword = request.GET.getlist('keyword')
 
         min_salary = request.GET.get('min_salary')
         max_salary = request.GET.get('max_salary')
         level= request.GET.getlist('level')
-        major = request.GET.getlist('major')
-        job_address = request.GET.getlist('job_address')
+        majors = request.GET.getlist('major')
+        job_addresses = request.GET.getlist('job_address')
         
-        result = None
-        print(keyword)
         filter = None
-
+        if(id):
+            filter = filter and Q(id =id) 
         if(keyword):
             for word in keyword:
                 filter = filter or (Q(name__regex=word) and Q(description__regex=word))
@@ -43,6 +43,16 @@ class APIJobs(viewsets.ModelViewSet):
 
         if(min_salary and max_salary):
             filter = filter or (Q( jobs__salary__lt=min_salary) and Q(jobs__salary__gt=min_salary))
+
+        if(majors):
+            for major in majors:
+                filter = filter and Q(major__name =major)  
+
+
+        if(job_addresses):
+            for address in job_addresses:
+                filter = filter and Q(address__city =address) 
+
         now = datetime.now()
         filter = filter and Q( jobs__expired_time__gt=now)
         if(filter):
@@ -56,11 +66,11 @@ class APIJobs(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        if(request.data['major']):
-            for major in request.data['major']:
+        # if(request.data['major']):
+        #     for major in request.data['major']:
                 
         serializer_data = JobsSerializer(data=request.data)
-        print(serializer_data.is_valid())
+        
         if serializer_data.is_valid():
             serializer_data.save()
             status_code = status.HTTP_201_CREATED
