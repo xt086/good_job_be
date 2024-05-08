@@ -74,7 +74,7 @@ class APIJobs(viewsets.ModelViewSet):
         if serializer_data.is_valid():
             serializer_data.save()
             status_code = status.HTTP_201_CREATED
-            return Response({"message": "Product Added Sucessfully", "status": status_code})
+            return Response({"message": "Job Added Sucessfully", "status": status_code})
         else:
             status_code = status.HTTP_400_BAD_REQUEST
             return Response({"message": "please fill the datails", "status": status_code})
@@ -84,10 +84,10 @@ class APIJobs(viewsets.ModelViewSet):
         if data:
             data.delete()
             status_code = status.HTTP_201_CREATED
-            return Response({"message": "Product delete Sucessfully", "status": status_code})
+            return Response({"message": "Job delete Sucessfully", "status": status_code})
         else:
             status_code = status.HTTP_400_BAD_REQUEST
-            return Response({"message": "Product data not found", "status": status_code})
+            return Response({"message": "Job data not found", "status": status_code})
 
     def update(self, request, *args, **kwargs):
         details = Jobs.objects.get(id=kwargs['pk'])
@@ -96,7 +96,7 @@ class APIJobs(viewsets.ModelViewSet):
         if serializer_data.is_valid():
             serializer_data.save()
             status_code = status.HTTP_201_CREATED
-            return Response({"message": "Product Update Sucessfully", "status": status_code})
+            return Response({"message": "Job Update Sucessfully", "status": status_code})
         else:
             status_code = status.HTTP_400_BAD_REQUEST
-            return Response({"message": "Product data Not found", "status": status_code})
+            return Response({"message": "Job data Not found", "status": status_code})

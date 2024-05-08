@@ -38,6 +38,7 @@ class Employee(AbstractUser):
         null=True
     )
 
+    cv = models.FileField(upload_to='cv/%Y/%m/%d')
     min_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
 
     max_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
