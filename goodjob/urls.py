@@ -38,5 +38,5 @@ urlpatterns = [
     path("", include("auth_app.urls")),
     path('auth/', include('djoser.social.urls')),
     path('jobs/', include('jobs.urls')),
-    path('employee/upload-cv', employee_view.list),
+    path('employee/upload-cv/', employee_view.list),
 ]
