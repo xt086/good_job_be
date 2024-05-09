@@ -1,57 +1,77 @@
-from django.http import HttpResponseRedirect
+
 from rest_framework import status
 from django.shortcuts import render
-from django.template import RequestContext
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Employee
 from .serializers import EmployeeSerializer
 from .upload_file.form import DocumentForm
-# Create your views here.
-@api_view(['GET'])
-def getData(request):
-    app = Employee.objects.all()
-    serializer = EmployeeSerializer(app, many=True)
-    return Response(serializer.data)
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import viewsets
+from .models import *
+from .serializers import *
+from rest_framework.decorators import action
+
+from django.db.models import FilteredRelation, Q
 
 
-@api_view(['POST'])
-def postData(request):
-    serializer = EmployeeSerializer(data=request.data)
+class APIEmployee(viewsets.ModelViewSet):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
 
-    if serializer.is_valid():
-        
-        serializer.save()
-        
-        return Response(serializer.data)
-    
+    def list(self, request, *args, **kwargs):
+        data = list(Employee.objects.all().values())
+        return Response(data)
 
-@api_view(['POST'])
-def list(request):
-    # Handle file upload
-    if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
-        
-        if form.is_valid():
-            
-            newdoc = Employee(cv = request.FILES['file'])
-            newdoc.save()
+    def create(self, request, *args, **kwargs):
 
-            # Redirect to the document list after POST
+        serializer_data = EmployeeSerializer(data=request.data)
+
+        if serializer_data.is_valid():
+            serializer_data.save()
             status_code = status.HTTP_201_CREATED
             return Response({"message": "Job Added Sucessfully", "status": status_code})
-    else:
-        form = DocumentForm() # A empty, unbound form
+        else:
+            status_code = status.HTTP_400_BAD_REQUEST
+            return Response({"message": "please fill the datails", "status": status_code})
 
-    # Load documents for the list page
-    documents = Employee.objects.all()
+    def destroy(self, request, *args, **kwargs):
+        data = Employee.objects.filter(id=kwargs['pk'])
+        if data:
+            data.delete()
+            status_code = status.HTTP_201_CREATED
+            return Response({"message": "Product delete Sucessfully", "status": status_code})
+        else:
+            status_code = status.HTTP_400_BAD_REQUEST
+            return Response({"message": "Product data not found", "status": status_code})
 
-    # Render list page with the documents and the form
-    return render(request, 'list.html', {'documents': documents, 'form': form}) 
-    # return render(
-    #     'list.html',
-    #     {'documents': documents, 'form': form},
-    #     context_instance=RequestContext(request)
-    # )
+    def update(self, request, *args, **kwargs):
+        details = Employee.objects.get(id=kwargs['pk'])
+        serializer_data = Employee(
+            details, data=request.data, partial=True)
+        if serializer_data.is_valid():
+            serializer_data.save()
+            status_code = status.HTTP_201_CREATED
+            return Response({"message": "Product Update Sucessfully", "status": status_code})
+        else:
+            status_code = status.HTTP_400_BAD_REQUEST
+            return Response({"message": "Product data Not found", "status": status_code})
+        
+    @action(detail=True, methods=["post"], name="upload-cv")
+    def upload_cv(request, *args, **kwargs):
+        # Handle file upload
+        if request.method == 'POST':
+            form = DocumentForm(request.POST, request.FILES)
 
+            if form.is_valid():
+                details = Employee.objects.get(id=kwargs['pk'])
+                details.cv = request.FILES['file']
+                details.save()
 
+                status_code = status.HTTP_201_CREATED
+                return Response({"message": "Job Added Sucessfully", "status": status_code})
+            
+        else:
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+            return Response({"message": "Methods not support", "status": status_code}) 

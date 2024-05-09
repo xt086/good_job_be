@@ -6,10 +6,9 @@ from .serializers import*
 # Create your views here.
 from .models import Jobs
 from .serializers import JobsSerializer
-from rest_framework import generics
-from rest_framework import filters
+from rest_framework.decorators import action
 
-from django.db.models import FilteredRelation, Q
+from django.db.models import Q
 
 # Create your views here.
 
@@ -20,8 +19,9 @@ class APIJobs(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         data = list(Jobs.objects.all().values())
         return Response(data)
-
-    def retrieve(self, request, *args, **kwargs):
+    
+    @action(detail=True, methods=["get"], name="find")
+    def find(self, request, *args, **kwargs):
         id = request.GET.getlist('id')
         keyword = request.GET.getlist('keyword')
 
@@ -66,8 +66,7 @@ class APIJobs(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        # if(request.data['major']):
-        #     for major in request.data['major']:
+
                 
         serializer_data = JobsSerializer(data=request.data)
         
