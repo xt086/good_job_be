@@ -19,17 +19,27 @@ from django.db.models import FilteredRelation, Q
 class APICompany(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
+    serializer_address = AddressSerializer
+    serializer_major = MajorSerializer
 
     def list(self, request, *args, **kwargs):
-        data = list(Company.objects.all().values())
+        data = list(Company.objects.select_related('major').all().values())
+        # serial_datas = []
+        # for data_detail in data:
+        #     print(CompanySerializer(data=data_detail).initial_data)
+        #     serial_datas.append(CompanySerializer(data=data_detail).initial_data)
+
+     
         return Response(data)
 
     def create(self, request, *args, **kwargs):
-
+        
         serializer_data = CompanySerializer(data=request.data)
-
+     
         if serializer_data.is_valid():
+        
             serializer_data.save()
+        
             status_code = status.HTTP_201_CREATED
             return Response({"message": "Job Added Sucessfully", "status": status_code})
         else:

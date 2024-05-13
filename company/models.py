@@ -1,6 +1,7 @@
 
 from address.models import Address
 from base.base_model import *
+
 from major.models import Major
 from django.contrib.auth.models import AbstractUser
 
@@ -18,5 +19,10 @@ class Company(Base):
 
     personal_introduction = models.CharField(max_length = 2000)
     major = models.ManyToManyField(Major)
+    
+
+
+
+    
 
 

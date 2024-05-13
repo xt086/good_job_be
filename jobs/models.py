@@ -1,5 +1,6 @@
 from address.models import Address
 from base.base_model import *
+from company.models import Company
 from major.models import Major
 from base.enum import  Level
 from datetime import datetime    
@@ -17,5 +18,7 @@ class Jobs(Base):
     job_address = models.OneToOneField(Address, null=True, blank=True,
                                            on_delete=models.CASCADE)
     major = models.ManyToManyField(Major)  
+
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
 
