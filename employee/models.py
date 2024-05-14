@@ -3,11 +3,13 @@ from base.base_model import *
 from base.enum import Gender, Level
 from jobs.models import Jobs
 from major.models import Major
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
+
+from user_app.models import AppUser
 # Create your models here.
-class Employee(AbstractUser):
-    
-    password = models.CharField(max_length=128, null=True)
+class Employee(AbstractBaseUser):
+    user = models.OneToOneField(AppUser, null=False, blank=False,
+                                           on_delete=models.CASCADE)
     name = models.CharField(max_length=128, null=True)
     number = models.CharField(max_length=128, null=True)
     gender = models.CharField(
@@ -16,7 +18,7 @@ class Employee(AbstractUser):
         null=True
     )
     age = models.IntegerField(null=True,)
-    email = models.CharField(max_length=250, unique=True, blank=False)
+
     REGISTRATION_CHOICES = [
         ('username', 'Username'),
         ('google', 'Google'),

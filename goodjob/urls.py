@@ -45,6 +45,7 @@ urlpatterns = [
     path('employee/', include('employee.urls')),
     path('major/', include('major.urls')),
     path('company/', include('company.urls')),
-    path('address/', include('address.urls'))
+    path('address/', include('address.urls')),
+    path('user/', include('user_app.urls'))
     
 ]
