@@ -15,7 +15,7 @@ from rest_framework.decorators import action
 
 from django.db.models import FilteredRelation, Q
 
-
+from django.core.serializers import serialize
 class APICompany(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
@@ -23,14 +23,14 @@ class APICompany(viewsets.ModelViewSet):
     serializer_major = MajorSerializer
 
     def list(self, request, *args, **kwargs):
-        data = list(Company.objects.select_related('major').all().values())
+        data = Company.objects.all()
         # serial_datas = []
         # for data_detail in data:
-        #     print(CompanySerializer(data=data_detail).initial_data)
+        #     print(CompanySerializer(data=data_detail))
         #     serial_datas.append(CompanySerializer(data=data_detail).initial_data)
 
-     
-        return Response(data)
+        serializer = CompanySerializer(data,many=True)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         

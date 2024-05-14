@@ -15,7 +15,7 @@ class APIAddress(viewsets.ModelViewSet):
     serializer_class = AddressSerializer
     
     def list(self, request, *args, **kwargs):
-        data = list(Address.objects.all().values())
+        data = list(Address.objects.all())
         return Response(data)
 
 

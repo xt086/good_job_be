@@ -14,13 +14,12 @@ class Company(Base):
     age = models.IntegerField(null=False,)
     email = models.EmailField(max_length=254,null=False,)
     company_address = models.OneToOneField(Address, null=False, blank=False,
-                                           on_delete=models.CASCADE)
+                                           on_delete=models.CASCADE,)
     
 
     personal_introduction = models.CharField(max_length = 2000)
     major = models.ManyToManyField(Major)
     
-
 
 
     

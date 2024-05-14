@@ -17,7 +17,7 @@ class APIJobs(viewsets.ModelViewSet):
     serializer_class = JobsSerializer
 
     def list(self, request, *args, **kwargs):
-        data = list(Jobs.objects.all().values())
+        data = list(Jobs.objects.all())
         return Response(data)
     
     @action(detail=True, methods=["get"], name="find")
