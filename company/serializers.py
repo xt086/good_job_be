@@ -9,8 +9,7 @@ from .models import Company
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    company_address = AddressSerializer(read_only=True
-                                        )
+    company_address = AddressSerializer(read_only=True)
 
     major = MajorSerializer(
         many=True, read_only=True

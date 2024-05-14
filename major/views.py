@@ -15,7 +15,7 @@ class APIMajor(viewsets.ModelViewSet):
     serializer_class = MajorSerializer
     
     def list(self, request, *args, **kwargs):
-        data = list(Major.objects.all().values())
+        data = list(Major.objects.all())
         return Response(data)
 
     def create(self, request, *args, **kwargs):
