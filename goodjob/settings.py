@@ -126,7 +126,7 @@ ROOT_URLCONF = 'goodjob.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR/'templates'], #updated line
+        'DIRS': [], #updated line
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, AbstractUser
 
 class AppUserManager(BaseUserManager):
 	def create_user(self, email, password=None):
@@ -25,7 +25,7 @@ class AppUserManager(BaseUserManager):
 		return user
 
 
-class AppUser(AbstractBaseUser, PermissionsMixin):
+class AppUser(AbstractUser):
 	id = models.UUIDField( 
          primary_key = True, 
          default = uuid.uuid4, 
