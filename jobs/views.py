@@ -7,7 +7,7 @@ from .serializers import*
 from .models import Jobs
 from .serializers import JobsSerializer
 from rest_framework.decorators import action
-
+from .upload_file.form import DocumentForm
 from django.db.models import Q
 
 # Create your views here.
@@ -99,3 +99,28 @@ class APIJobs(viewsets.ModelViewSet):
         else:
             status_code = status.HTTP_400_BAD_REQUEST
             return Response({"message": "Job data Not found", "status": status_code})
+    
+
+    @action(detail=True, methods=["post"], name="upload-cv")
+    def upload_cv(request, *args, **kwargs):
+        # Handle file upload
+        if request.method == 'POST':
+            form = DocumentForm(request.POST, request.FILES)
+            user_id = request.data["userId"]
+            if form.is_valid():
+                
+                details = Jobs.objects.get(id=kwargs['pk'])
+
+                employee = Employee.objects.get(id =user_id)
+                employee.prefer_jobs = details.id
+                # details.cv.upl
+                
+                details.cv = request.FILES['file']
+                details.save()
+
+                status_code = status.HTTP_201_CREATED
+                return Response({"message": "Job Added Sucessfully", "status": status_code})
+            
+        else:
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+            return Response({"message": "Methods not support", "status": status_code})
