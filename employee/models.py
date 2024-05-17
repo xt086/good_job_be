@@ -1,7 +1,7 @@
 from address.models import Address
 from base.base_model import *
 from base.enum import Gender, Level
-from jobs.models import Jobs
+
 from major.models import Major
 from django.contrib.auth.models import AbstractBaseUser
 
@@ -40,11 +40,11 @@ class Employee(AbstractBaseUser):
         null=True
     )
 
-    cv = models.FileField(upload_to='cv/%Y/%m/%d')
+    cv = models.FileField(upload_to=id)
     min_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
 
     max_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
 
     major = models.ManyToManyField(Major)
 
-    prefer_jobs = models.ManyToManyField(Jobs)
+    

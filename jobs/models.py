@@ -23,5 +23,6 @@ class Jobs(Base):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     cv = models.FileField(upload_to='cv/%Y/%m/%d')
+    prefer_jobs = models.ManyToManyField(Employee)
 
 
