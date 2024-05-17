@@ -9,7 +9,7 @@ from .models import Jobs
 
 
 class JobsSerializer(serializers.ModelSerializer):
-    company_address = AddressSerializer(read_only=True
+    job_address = AddressSerializer(read_only=True
                                             )
 
     major = MajorSerializer(

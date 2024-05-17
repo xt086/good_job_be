@@ -9,7 +9,8 @@ from .serializers import JobsSerializer
 from rest_framework.decorators import action
 from .upload_file.form import DocumentForm
 from django.db.models import Q
-
+from minio_service.minio_handler import MinioHandler
+from io import BytesIO
 # Create your views here.
 
 class APIJobs(viewsets.ModelViewSet):
@@ -107,19 +108,33 @@ class APIJobs(viewsets.ModelViewSet):
         if request.method == 'POST':
             form = DocumentForm(request.POST, request.FILES)
             user_id = request.data["userId"]
-            if form.is_valid():
-                
-                details = Jobs.objects.get(id=kwargs['pk'])
+            try:
+                data = request.FILES['file'].read()
 
-                employee = Employee.objects.get(id =user_id)
-                employee.prefer_jobs = details.id
-                # details.cv.upl
-                
-                details.cv = request.FILES['file']
-                details.save()
+                file_name = "test"
 
-                status_code = status.HTTP_201_CREATED
-                return Response({"message": "Job Added Sucessfully", "status": status_code})
+                data_file = MinioHandler().get_instance().put_object(
+                    file_name=file_name,
+                    file_data=BytesIO(data),
+                    content_type="pdf"
+                )
+                return data_file
+            
+            except Exception as e:
+                raise e
+            # if form.is_valid():
+                
+            #     details = Jobs.objects.get(id=kwargs['pk'])
+
+            #     employee = Employee.objects.get(id =user_id)
+            #     employee.prefer_jobs = details.id
+            #     # details.cv.upl
+                
+            #     details.cv = request.FILES['file']
+            #     details.save()
+
+            #     status_code = status.HTTP_201_CREATED
+            #     return Response({"message": "Job Added Sucessfully", "status": status_code})
             
         else:
             status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
