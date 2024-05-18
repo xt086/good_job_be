@@ -17,8 +17,8 @@ class MinioHandler():
 
     def __init__(self):
         self.minio_url = 'localhost:9000'
-        self.access_key = 'admin'
-        self.secret_key = 'password@123'
+        self.access_key = 'gztQsXY5FkjnzimEHPnR'
+        self.secret_key = 'WueUivaYvuNwebV2Z3m9Hs4ebYpAfB35Xowfej1U'
         self.bucket_name = 'fastapi-minio'
         self.client = Minio(
             self.minio_url,

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from address.models import Address
 from address.serializers import AddressSerializer
+from employee.serializers import EmployeeSerializer
 from major.models import Major
 from major.serializers import MajorSerializer
 
@@ -13,6 +14,9 @@ class JobsSerializer(serializers.ModelSerializer):
                                             )
 
     major = MajorSerializer(
+            many=True, read_only=True
+    )
+    applied_jobs = EmployeeSerializer(
             many=True, read_only=True
     )
     class Meta:

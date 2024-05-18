@@ -22,7 +22,8 @@ class APIEmployee(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         data = list(Employee.objects.all())
-        return Response(data)
+        serializer = EmployeeSerializer(data,many=True)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
 

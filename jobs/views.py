@@ -11,6 +11,7 @@ from .upload_file.form import DocumentForm
 from django.db.models import Q
 from minio_service.minio_handler import MinioHandler
 from io import BytesIO
+from rest_framework.decorators import api_view
 # Create your views here.
 
 class APIJobs(viewsets.ModelViewSet):
@@ -19,7 +20,8 @@ class APIJobs(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         data = list(Jobs.objects.all())
-        return Response(data)
+        serializer = JobsSerializer(data,many=True)
+        return Response(serializer.data)
     
     @action(detail=True, methods=["get"], name="find")
     def find(self, request, *args, **kwargs):
@@ -102,14 +104,54 @@ class APIJobs(viewsets.ModelViewSet):
             return Response({"message": "Job data Not found", "status": status_code})
     
 
-    @action(detail=True, methods=["post"], name="upload-cv")
-    def upload_cv(request, *args, **kwargs):
+    # @action(detail=True, methods=["post"], name="upload-cv")
+    # def upload_cv(request, *args, **kwargs):
+    #     # Handle file upload
+    #         print(request.__dict__)
+    #         form = DocumentForm("POST", request.data["file"])
+    #         user_id = request.data["userId"]
+    #         try:
+    #             data = request.data['file'].read()
+
+    #             file_name = "test"
+
+    #             data_file = MinioHandler().get_instance().put_object(
+    #                 file_name=file_name,
+    #                 file_data=BytesIO(data),
+    #                 content_type="pdf"
+    #             )
+    #             return data_file
+            
+    #         except Exception as e:
+    #             raise e
+    #         # if form.is_valid():
+                
+    #         #     details = Jobs.objects.get(id=kwargs['pk'])
+
+    #         #     employee = Employee.objects.get(id =user_id)
+    #         #     employee.prefer_jobs = details.id
+    #         #     # details.cv.upl
+                
+    #         #     details.cv = request.FILES['file']
+    #         #     details.save()
+
+    #         #     status_code = status.HTTP_201_CREATED
+    #         #     return Response({"message": "Job Added Sucessfully", "status": status_code})
+            
+    #     # else:
+    #     #     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    #     #     return Response({"message": "Methods not support", "status": status_code})
+
+@api_view(['POST'])
+def postData(request):
+    
         # Handle file upload
-        if request.method == 'POST':
-            form = DocumentForm(request.POST, request.FILES)
+            print(request.__dict__)
+            form = DocumentForm("POST", request.data["file"])
             user_id = request.data["userId"]
+            job_id = request.data["jobId"]
             try:
-                data = request.FILES['file'].read()
+                data = request.data['file'].read()
 
                 file_name = "test"
 
@@ -136,6 +178,6 @@ class APIJobs(viewsets.ModelViewSet):
             #     status_code = status.HTTP_201_CREATED
             #     return Response({"message": "Job Added Sucessfully", "status": status_code})
             
-        else:
-            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-            return Response({"message": "Methods not support", "status": status_code})
+        # else:
+        #     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        #     return Response({"message": "Methods not support", "status": status_code})

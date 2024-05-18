@@ -7,7 +7,7 @@ from django.contrib.auth.models import AbstractBaseUser
 
 from user_app.models import AppUser
 # Create your models here.
-class Employee(AbstractBaseUser):
+class Employee(Base):
     user = models.OneToOneField(AppUser, null=False, blank=False,
                                            on_delete=models.CASCADE)
     name = models.CharField(max_length=128, null=True)
@@ -40,7 +40,7 @@ class Employee(AbstractBaseUser):
         null=True
     )
 
-    cv = models.FileField(upload_to=id)
+    
     min_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
 
     max_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
