@@ -46,3 +46,22 @@ class CompanySerializer(serializers.ModelSerializer):
         company.major.set(list_major)
 
         return company
+    
+class CompanySerializerNonAuth(serializers.ModelSerializer):
+    company_address = AddressSerializer(read_only=True)
+
+    major = MajorSerializer(
+        many=True, read_only=True
+    )
+
+    class Meta:
+        model = Company
+        fields = ['name',
+    
+    'age',
+ 
+    'company_address',
+    'personal_introduction',
+    'major']
+
+    

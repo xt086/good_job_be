@@ -53,10 +53,10 @@ class MinioHandler():
     def put_object(self, file_data, file_name, content_type):
         try:
             datetime_prefix = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-            object_name = f"{datetime_prefix}___{file_name}"
+            object_name = f"{datetime_prefix}/{file_name}"
             while self.check_file_name_exists(bucket_name=self.bucket_name, file_name=object_name):
                 random_prefix = random.randint(1, 1000)
-                object_name = f"{datetime_prefix}___{random_prefix}___{file_name}"
+                object_name =  f"{datetime_prefix}/{random_prefix}/{file_name}"
 
             self.client.put_object(
                 bucket_name=self.bucket_name,

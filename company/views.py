@@ -12,17 +12,24 @@ from rest_framework import viewsets
 from .models import *
 from .serializers import *
 from rest_framework.decorators import action
-
+from rest_framework import permissions, status
 from django.db.models import FilteredRelation, Q
 
 from django.core.serializers import serialize
+
+class SpecialPermission(permissions.IsAuthenticated):
+    def has_permission(self, request, view):
+        if request.method == 'POST':
+            return True
+        return super().has_permission(request, view)
 class APICompany(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     serializer_address = AddressSerializer
     serializer_major = MajorSerializer
-
+    permission_classes = [SpecialPermission]
     def list(self, request, *args, **kwargs):
+        
         data = Company.objects.all()
         # serial_datas = []
         # for data_detail in data:
@@ -35,7 +42,8 @@ class APICompany(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         
         serializer_data = CompanySerializer(data=request.data)
-     
+        print(serializer_data.is_valid())
+        print(serializer_data.data)
         if serializer_data.is_valid():
         
             serializer_data.save()
