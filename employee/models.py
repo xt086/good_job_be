@@ -41,9 +41,9 @@ class Employee(Base):
     )
 
     
-    min_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
+    min_salary = models.IntegerField(null=True)
 
-    max_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
+    max_salary = models.IntegerField(null=True)
 
     major = models.ManyToManyField(Major)
 

@@ -9,7 +9,8 @@ from datetime import datetime
 class Jobs(Base):
     name = models.CharField(max_length=128, null=False)
     expired_time = models.DateTimeField(auto_now_add=True, blank=True)
-    salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
+    min_salary = models.IntegerField(null=True)
+    max_salary = models.IntegerField(null=True)
     description = models.CharField(max_length = 2000)
     level= models.CharField(
         max_length = 2,
