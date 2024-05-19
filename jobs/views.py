@@ -98,80 +98,65 @@ class APIJobs(viewsets.ModelViewSet):
             return Response({"message": "Job data Not found", "status": status_code})
     
 
-    # @action(detail=True, methods=["post"], name="upload-cv")
-    # def upload_cv(request, *args, **kwargs):
-    #     # Handle file upload
-    #         print(request.__dict__)
-    #         form = DocumentForm("POST", request.data["file"])
-    #         user_id = request.data["userId"]
-    #         try:
-    #             data = request.data['file'].read()
-
-    #             file_name = "test"
-
-    #             data_file = MinioHandler().get_instance().put_object(
-    #                 file_name=file_name,
-    #                 file_data=BytesIO(data),
-    #                 content_type="pdf"
-    #             )
-    #             return data_file
-            
-    #         except Exception as e:
-    #             raise e
-    #         # if form.is_valid():
-                
-    #         #     details = Jobs.objects.get(id=kwargs['pk'])
-
-    #         #     employee = Employee.objects.get(id =user_id)
-    #         #     employee.prefer_jobs = details.id
-    #         #     # details.cv.upl
-                
-    #         #     details.cv = request.FILES['file']
-    #         #     details.save()
-
-    #         #     status_code = status.HTTP_201_CREATED
-    #         #     return Response({"message": "Job Added Sucessfully", "status": status_code})
-            
-    #     # else:
-    #     #     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    #     #     return Response({"message": "Methods not support", "status": status_code})
-
 @api_view(['POST'])
-def postData(request):
+def postFile(request):
     
         # Handle file upload
-            print(request.__dict__)
-            form = DocumentForm("POST", request.data["file"])
-            user_id = request.data["userId"]
-            job_id = request.data["jobId"]
-            try:
-                data = request.data['file'].read()
+        form = DocumentForm("POST", request.data["file"])
+        employee_id = request.data["employeeId"]
+        job_id = request.data["jobId"]
+        try:
+            data = request.data['file'].read()
 
-                file_name = "test"
+            file_name = str(job_id) + "/" + str(employee_id)+".pdf"
 
-                data_file = MinioHandler().get_instance().put_object(
-                    file_name=file_name,
-                    file_data=BytesIO(data),
-                    content_type="pdf"
-                )
-                return data_file
+            data_file = MinioHandler().get_instance().put_object(
+                file_name=file_name,
+                file_data=BytesIO(data),
+                content_type="pdf"
+            )
+            return data_file
+        
+        except Exception as e:
+            raise e
+        
+
+@api_view(['GET'])
+def getFile(request):
+    
+        # Handle file upload
+        
+        employee_id = request.GET.get["employeeId"]
+        job_id = request.GET.get["jobId"]
+        try:
             
-            except Exception as e:
-                raise e
-            # if form.is_valid():
-                
-            #     details = Jobs.objects.get(id=kwargs['pk'])
-
-            #     employee = Employee.objects.get(id =user_id)
-            #     employee.prefer_jobs = details.id
-            #     # details.cv.upl
-                
-            #     details.cv = request.FILES['file']
-            #     details.save()
-
-            #     status_code = status.HTTP_201_CREATED
-            #     return Response({"message": "Job Added Sucessfully", "status": status_code})
+            prefix = None
+            if job_id:
+                if employee_id:
+                    prefix = job_id+"/"+employee_id+"/"
+                    employee= Employee.objects.filter(id = employee_id)
+                    
+                    data = {
+                        "employee": employee,
+                        "cv_url":  "http://localhost:9000" + job_id + "/" + employee.id
+                    }
+                    return data
+                else:
+                    prefix = job_id+"/"
+            minio = MinioHandler()
+            endpoint_files = minio.list_obj(prefix= prefix)
+            employee_ids =[]
+            for endpoint_file in endpoint_files:
+                employee_ids.append(str(endpoint_file).split("/")[1].split(".")[0])
+            employee_data = []
+            if(employee_ids != []):
+                employees= Employee.objects.filter(id__in = employee_ids)
+                for employee in employees:
+                    data = {
+                        "employee": employee,
+                        "cv_url":  "http://localhost:9000" + job_id + "/" + employee.id
+                    }
+            return employee_data
+        except Exception as e:
+            raise e
             
-        # else:
-        #     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-        #     return Response({"message": "Methods not support", "status": status_code})

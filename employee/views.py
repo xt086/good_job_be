@@ -21,10 +21,12 @@ class APIEmployee(viewsets.ModelViewSet):
     serializer_class = EmployeeSerializer
 
     def list(self, request, *args, **kwargs):
+        user_id = request.GET.get('userId')
         data = list(Employee.objects.all())
         serializer = EmployeeSerializer(data,many=True)
+        if user_id:
+            data = Employee.objects.filter(user= user_id)
         return Response(serializer.data)
-
     def create(self, request, *args, **kwargs):
 
         serializer_data = EmployeeSerializer(data=request.data)
