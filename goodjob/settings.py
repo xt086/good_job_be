@@ -232,3 +232,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+CSRF_COOKIE_SAMESITE = 'Strict'  
+SESSION_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]

@@ -48,6 +48,7 @@ urlpatterns = [
     path('company/', include('company.urls')),
     path('address/', include('address.urls')),
     path('user/', include('user_app.urls')),
-    path('upload', views.postData)
+    path('upload', views.postFile),
+    path('get-file', views.getFile)
     
 ]

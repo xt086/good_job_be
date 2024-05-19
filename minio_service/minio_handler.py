@@ -19,7 +19,7 @@ class MinioHandler():
         self.minio_url = 'localhost:9000'
         self.access_key = 'gztQsXY5FkjnzimEHPnR'
         self.secret_key = 'WueUivaYvuNwebV2Z3m9Hs4ebYpAfB35Xowfej1U'
-        self.bucket_name = 'fastapi-minio'
+        self.bucket_name = 'cv'
         self.client = Minio(
             self.minio_url,
             access_key=self.access_key,
@@ -75,3 +75,12 @@ class MinioHandler():
             return data_file
         except Exception as e:
             raise Exception(e)
+
+
+    def list_obj(self, prefix):
+        objects = self.client.list_objects(self.bucket_name, prefix=prefix, recursive=True,)
+        url = []
+        for obj in objects:
+            url.append( obj.object_name)
+
+        return url
