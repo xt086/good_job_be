@@ -37,7 +37,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             # get/(create if not exists) major
             for major_data in major_datas:
                 major, _ = Major.objects.get_or_create(
-                    name=major_data
+                    name=major_data["name"]
                 )
                 list_major.append(major)
 
