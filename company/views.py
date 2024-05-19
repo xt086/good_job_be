@@ -17,24 +17,18 @@ from django.db.models import FilteredRelation, Q
 
 from django.core.serializers import serialize
 
-class SpecialPermission(permissions.IsAuthenticated):
-    def has_permission(self, request, view):
-        if request.method == 'POST':
-            return True
-        return super().has_permission(request, view)
+
 class APICompany(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     serializer_address = AddressSerializer
     serializer_major = MajorSerializer
-    permission_classes = [SpecialPermission]
+    
     def list(self, request, *args, **kwargs):
-        
+        user_id = request.GET.get('userId')
         data = Company.objects.all()
-        # serial_datas = []
-        # for data_detail in data:
-        #     print(CompanySerializer(data=data_detail))
-        #     serial_datas.append(CompanySerializer(data=data_detail).initial_data)
+        if user_id:
+            data = Company.objects.filter(user= user_id)
 
         serializer = CompanySerializer(data,many=True)
         return Response(serializer.data)
@@ -42,8 +36,6 @@ class APICompany(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         
         serializer_data = CompanySerializer(data=request.data)
-        print(serializer_data.is_valid())
-        print(serializer_data.data)
         if serializer_data.is_valid():
         
             serializer_data.save()
@@ -76,4 +68,5 @@ class APICompany(viewsets.ModelViewSet):
             status_code = status.HTTP_400_BAD_REQUEST
             return Response({"message": "Product data Not found", "status": status_code})
         
+    
     

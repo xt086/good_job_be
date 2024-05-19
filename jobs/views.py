@@ -19,12 +19,6 @@ class APIJobs(viewsets.ModelViewSet):
     serializer_class = JobsSerializer
 
     def list(self, request, *args, **kwargs):
-        data = list(Jobs.objects.all())
-        serializer = JobsSerializer(data,many=True)
-        return Response(serializer.data)
-    
-    @action(detail=True, methods=["get"], name="find")
-    def find(self, request, *args, **kwargs):
         id = request.GET.getlist('id')
         keyword = request.GET.getlist('keyword')
 
@@ -62,12 +56,12 @@ class APIJobs(viewsets.ModelViewSet):
 
             app = Jobs.objects.filter(filter)
         else:
-            app = []
-            # app = Jobs.objects.all()
+            # app = []
+            app = Jobs.objects.all()
 
         serializer = JobsSerializer(app, many=True)
         return Response(serializer.data)
-
+    
     def create(self, request, *args, **kwargs):
 
                 
