@@ -133,13 +133,16 @@ def getFile(request):
         
         employee_id = request.GET.get("employeeId")
         job_id = request.GET.get("jobId")
+        print(job_id)
+        print(employee_id)
         try:
             
             prefix = None
             if job_id:
                 if employee_id:
+        
                     prefix = job_id+"/"+employee_id+"/"
-                    employee= Employee.objects.filter(id = employee_id)
+                    employee= Employee.objects.get(id = employee_id)
                     
                     data = {
                         "employee": EmployeeSerializer(employee).data,
@@ -149,22 +152,25 @@ def getFile(request):
 
                 else:
                     prefix = job_id+"/"
-            minio = MinioHandler()
-            endpoint_files = minio.list_obj(prefix= prefix)
-            employee_ids =[]
-            for endpoint_file in endpoint_files:
-                employee_ids.append(str(endpoint_file).split("/")[1].split(".")[0])
-            employee_data = []
-            if(employee_ids != []):
-               
-                
-                for employee_id in employee_ids:
-                    employee= Employee.objects.filter(id = employee_id)
-                    data = {
-                        "employee": EmployeeSerializer(employee).data,
-                        "cv_url":  "http://localhost:9000/"+minio.bucket_name +"/" + str(job_id) + "/" + str(employee_id)+".pdf"
-                    }
-                    employee_data.append(data)
+                    minio = MinioHandler()
+                    endpoint_files = minio.list_obj(prefix= prefix)
+                    print(endpoint_files)
+                    employee_ids =[]
+                    
+                    for endpoint_file in endpoint_files:
+                        employee_ids.append(str(endpoint_file).split("/")[1].split(".")[0])
+                    employee_data = []
+                    if(employee_ids != []):
+                    
+                        
+                        for employee_id in employee_ids:
+                            employee= Employee.objects.get(id = employee_id)
+                            
+                            data = {
+                                "employee": EmployeeSerializer(employee).data,
+                                "cv_url":  "http://localhost:9000/"+minio.bucket_name +"/" + str(job_id) + "/" + str(employee_id)+".pdf"
+                            }
+                            employee_data.append(data)
             return Response({"message": employee_data, "status": 200})
         except Exception as e:
             raise e
