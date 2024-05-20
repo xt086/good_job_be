@@ -31,32 +31,34 @@ class APIJobs(viewsets.ModelViewSet):
         
         filter = None
         if(companyId):
-            filter = filter and Q(company =companyId) 
+            
+            filter =  Q(company =companyId)
+            print(filter) 
         if(id):
-            filter = filter and Q(id =id) 
+            filter = filter or Q(id =id) 
         if(keyword):
             for word in keyword:
                 filter = filter or (Q(name__regex=word) and Q(description__regex=word))
 
         if(level):
-            filter = filter and Q(level=level)
+            filter = filter or Q(level=level)
 
         if(min_salary and max_salary):
             filter = filter or (Q( jobs__salary__lt=min_salary) and Q(jobs__salary__gt=min_salary))
 
         if(majors):
             for major in majors:
-                filter = filter and Q(major__name =major)  
+                filter = filter or Q(major__name =major)  
 
 
         if(job_addresses):
             for address in job_addresses:
-                filter = filter and Q(address__city =address) 
+                filter = filter or Q(address__city =address) 
 
         now = datetime.now()
-        filter = filter and Q( jobs__expired_time__gt=now)
+        # filter = filter or Q( jobs__expired_time__gt=now)
         if(filter):
-
+            print(filter)
             app = Jobs.objects.filter(filter)
         else:
             # app = []
