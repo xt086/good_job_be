@@ -30,7 +30,7 @@ class APIJobs(viewsets.ModelViewSet):
         job_addresses = request.GET.getlist('job_address')
         
         filter = None
-        if(id):
+        if(companyId):
             filter = filter and Q(company =companyId) 
         if(id):
             filter = filter and Q(id =id) 
