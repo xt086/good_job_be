@@ -22,7 +22,7 @@ class APIJobs(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         id = request.GET.getlist('id')
         keyword = request.GET.getlist('keyword')
-
+        companyId = request.GET.get('companyId')
         min_salary = request.GET.get('min_salary')
         max_salary = request.GET.get('max_salary')
         level= request.GET.getlist('level')
@@ -30,6 +30,8 @@ class APIJobs(viewsets.ModelViewSet):
         job_addresses = request.GET.getlist('job_address')
         
         filter = None
+        if(id):
+            filter = filter and Q(company =companyId) 
         if(id):
             filter = filter and Q(id =id) 
         if(keyword):
@@ -139,7 +141,7 @@ def getFile(request):
                     
                     data = {
                         "employee": EmployeeSerializer(employee).data,
-                        "cv_url":  "http://localhost:9000/" +minio.bucket_name + "/" + str(job_id) + "/" + str(employee.id)
+                        "cv_url":  "http://localhost:9000/" +minio.bucket_name + "/" + str(job_id) + "/" + str(employee_id)
                     }
                     return Response({"message": data, "status": 200})
 
@@ -152,13 +154,13 @@ def getFile(request):
                 employee_ids.append(str(endpoint_file).split("/")[1].split(".")[0])
             employee_data = []
             if(employee_ids != []):
-                employees= Employee.objects.filter(id__in = employee_ids)
-                
-                for employee in employees:
                
+                
+                for employee_id in employee_ids:
+                    employee= Employee.objects.filter(id = employee_id)
                     data = {
                         "employee": EmployeeSerializer(employee).data,
-                        "cv_url":  "http://localhost:9000/"+minio.bucket_name +"/" + str(job_id) + "/" + str(employee.id)+".pdf"
+                        "cv_url":  "http://localhost:9000/"+minio.bucket_name +"/" + str(job_id) + "/" + str(employee_id)+".pdf"
                     }
                     employee_data.append(data)
             return Response({"message": employee_data, "status": 200})
