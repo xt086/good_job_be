@@ -17,8 +17,8 @@ class MinioHandler():
 
     def __init__(self):
         self.minio_url = 'localhost:9000'
-        self.access_key = 'gztQsXY5FkjnzimEHPnR'
-        self.secret_key = 'WueUivaYvuNwebV2Z3m9Hs4ebYpAfB35Xowfej1U'
+        self.access_key = 'fXlqy9uSC833D9FNgVuT'
+        self.secret_key = 'pptUm1PCyBLy9RPaMnMU4gH2x1iu0i6D2IaQllDz'
         self.bucket_name = 'uploadcv'
         self.client = Minio(
             self.minio_url,
@@ -53,7 +53,7 @@ class MinioHandler():
     def put_object(self, file_data, file_name, content_type):
         try:
             datetime_prefix = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-            object_name = f"{datetime_prefix}/{file_name}"
+            object_name = f"{file_name}"
             while self.check_file_name_exists(bucket_name=self.bucket_name, file_name=object_name):
                 random_prefix = random.randint(1, 1000)
                 object_name =  f"{datetime_prefix}/{random_prefix}/{file_name}"

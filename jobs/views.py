@@ -1,3 +1,4 @@
+import json
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
@@ -115,7 +116,7 @@ def postFile(request):
                 file_data=BytesIO(data),
                 content_type="pdf"
             )
-            return data_file
+            return Response({"message": "Upload CV Sucessfully", "status": 200})
         
         except Exception as e:
             raise e
@@ -126,8 +127,8 @@ def getFile(request):
     
         # Handle file upload
         
-        employee_id = request.GET.get["employeeId"]
-        job_id = request.GET.get["jobId"]
+        employee_id = request.GET.get("employeeId")
+        job_id = request.GET.get("jobId")
         try:
             
             prefix = None
@@ -137,10 +138,11 @@ def getFile(request):
                     employee= Employee.objects.filter(id = employee_id)
                     
                     data = {
-                        "employee": employee,
-                        "cv_url":  "http://localhost:9000" + job_id + "/" + employee.id
+                        "employee": EmployeeSerializer(employee).data,
+                        "cv_url":  "http://localhost:9000/" +minio.bucket_name + "/" + str(job_id) + "/" + str(employee.id)
                     }
-                    return data
+                    return Response({"message": data, "status": 200})
+
                 else:
                     prefix = job_id+"/"
             minio = MinioHandler()
@@ -151,12 +153,15 @@ def getFile(request):
             employee_data = []
             if(employee_ids != []):
                 employees= Employee.objects.filter(id__in = employee_ids)
+                
                 for employee in employees:
+               
                     data = {
-                        "employee": employee,
-                        "cv_url":  "http://localhost:9000" + job_id + "/" + employee.id
+                        "employee": EmployeeSerializer(employee).data,
+                        "cv_url":  "http://localhost:9000/"+minio.bucket_name +"/" + str(job_id) + "/" + str(employee.id)+".pdf"
                     }
-            return employee_data
+                    employee_data.append(data)
+            return Response({"message": employee_data, "status": 200})
         except Exception as e:
             raise e
             
