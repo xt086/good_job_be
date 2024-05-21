@@ -21,13 +21,9 @@ class APIEmployee(viewsets.ModelViewSet):
     serializer_class = EmployeeSerializer
 
     def list(self, request, *args, **kwargs):
-        user_id = request.GET.get('userId')
         data = list(Employee.objects.all())
-        
-        if user_id:
-            data = Employee.objects.filter(user= user_id)
-        serializer = EmployeeSerializer(data,many=True)
-        return Response(serializer.data)
+        return Response(data)
+
     def create(self, request, *args, **kwargs):
 
         serializer_data = EmployeeSerializer(data=request.data)
@@ -62,4 +58,20 @@ class APIEmployee(viewsets.ModelViewSet):
             status_code = status.HTTP_400_BAD_REQUEST
             return Response({"message": "Product data Not found", "status": status_code})
         
-     
+    @action(detail=True, methods=["post"], name="upload-cv")
+    def upload_cv(request, *args, **kwargs):
+        # Handle file upload
+        if request.method == 'POST':
+            form = DocumentForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                details = Employee.objects.get(id=kwargs['pk'])
+                details.cv = request.FILES['file']
+                details.save()
+
+                status_code = status.HTTP_201_CREATED
+                return Response({"message": "Job Added Sucessfully", "status": status_code})
+            
+        else:
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+            return Response({"message": "Methods not support", "status": status_code}) 

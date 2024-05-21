@@ -12,30 +12,31 @@ from rest_framework import viewsets
 from .models import *
 from .serializers import *
 from rest_framework.decorators import action
-from rest_framework import permissions, status
+
 from django.db.models import FilteredRelation, Q
 
 from django.core.serializers import serialize
-
-
 class APICompany(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     serializer_address = AddressSerializer
     serializer_major = MajorSerializer
-    
+
     def list(self, request, *args, **kwargs):
-        user_id = request.GET.get('userId')
         data = Company.objects.all()
-        if user_id:
-            data = Company.objects.filter(user= user_id)
+        # serial_datas = []
+        # for data_detail in data:
+        #     print(CompanySerializer(data=data_detail))
+        #     serial_datas.append(CompanySerializer(data=data_detail).initial_data)
 
         serializer = CompanySerializer(data,many=True)
+        print(request.headers)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         
         serializer_data = CompanySerializer(data=request.data)
+     
         if serializer_data.is_valid():
         
             serializer_data.save()
@@ -68,5 +69,4 @@ class APICompany(viewsets.ModelViewSet):
             status_code = status.HTTP_400_BAD_REQUEST
             return Response({"message": "Product data Not found", "status": status_code})
         
-    
     
