@@ -209,10 +209,7 @@ CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
+
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'SOCIAL_AUTH_TOKEN_STRATEGY': 'strategy.TokenStrategy',
@@ -235,9 +232,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
-CSRF_COOKIE_SAMESITE = 'Strict'  
-SESSION_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]

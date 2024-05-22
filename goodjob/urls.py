@@ -22,7 +22,6 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework_simplejwt import views as jwt_views
 from drf_yasg import openapi
-from jobs import views
 schema_view = get_schema_view(
     openapi.Info(
         title="Episyche Technologies",
@@ -47,8 +46,6 @@ urlpatterns = [
     path('major/', include('major.urls')),
     path('company/', include('company.urls')),
     path('address/', include('address.urls')),
-    path('user/', include('user_app.urls')),
-    path('upload', views.postFile),
-    path('get-file', views.getFile)
+    path('user/', include('user_app.urls'))
     
 ]

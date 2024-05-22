@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from address.models import Address
 from address.serializers import AddressSerializer
-from employee.serializers import EmployeeSerializer
 from major.models import Major
 from major.serializers import MajorSerializer
 
@@ -10,13 +9,10 @@ from .models import Jobs
 
 
 class JobsSerializer(serializers.ModelSerializer):
-    job_address = AddressSerializer(read_only=True
+    company_address = AddressSerializer(read_only=True
                                             )
 
     major = MajorSerializer(
-            many=True, read_only=True
-    )
-    applied_jobs = EmployeeSerializer(
             many=True, read_only=True
     )
     class Meta:
@@ -41,7 +37,7 @@ class JobsSerializer(serializers.ModelSerializer):
             # get/(create if not exists) major
             for major_data in major_datas:
                 major, _ = Major.objects.get_or_create(
-                    name=major_data["name"]
+                    name=major_data
                 )
                 list_major.append(major)
 

@@ -1,13 +1,13 @@
 from address.models import Address
 from base.base_model import *
 from base.enum import Gender, Level
-
+from jobs.models import Jobs
 from major.models import Major
 from django.contrib.auth.models import AbstractBaseUser
 
 from user_app.models import AppUser
 # Create your models here.
-class Employee(Base):
+class Employee(AbstractBaseUser):
     user = models.OneToOneField(AppUser, null=False, blank=False,
                                            on_delete=models.CASCADE)
     name = models.CharField(max_length=128, null=True)
@@ -40,11 +40,11 @@ class Employee(Base):
         null=True
     )
 
-    
-    min_salary = models.IntegerField(null=True)
+    cv = models.FileField(upload_to='cv/%Y/%m/%d')
+    min_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
 
-    max_salary = models.IntegerField(null=True)
+    max_salary = models.DecimalField(max_digits=3, decimal_places=1, null=True)
 
     major = models.ManyToManyField(Major)
 
-    
+    prefer_jobs = models.ManyToManyField(Jobs)
