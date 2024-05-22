@@ -38,13 +38,13 @@ class APIJobs(viewsets.ModelViewSet):
             filter = filter or Q(id =id) 
         if(keyword):
             for word in keyword:
-                filter = filter or (Q(name__regex=word) and Q(description__regex=word))
+                filter = filter or (Q(name__regex=word) or Q(description__regex=word))
 
         if(level):
             filter = filter or Q(level=level)
 
         if(min_salary and max_salary):
-            filter = filter or (Q( jobs__salary__lt=min_salary) and Q(jobs__salary__gt=min_salary))
+            filter = filter or (Q( jobs__salary__lt=min_salary) or Q(jobs__salary__gt=min_salary))
 
         if(majors):
             for major in majors:
@@ -58,7 +58,7 @@ class APIJobs(viewsets.ModelViewSet):
         now = datetime.now()
         # filter = filter or Q( jobs__expired_time__gt=now)
         if(filter):
-            print(filter)
+            
             app = Jobs.objects.filter(filter)
         else:
             # app = []
