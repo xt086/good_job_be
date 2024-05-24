@@ -1,6 +1,6 @@
 from base.base_model import *
 # Create your models here.
-class Address(models.Model):
+class Address(Base):
 
     street = models.CharField(max_length=300)
     district = models.CharField(max_length=300)
