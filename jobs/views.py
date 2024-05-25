@@ -111,16 +111,16 @@ def postFile(request):
         employee_id = request.data["employeeId"]
         job_id = request.data["jobId"]
         try:
-            data = request.data['file'].read()
+            data = request.data['file']
 
             file_name = str(job_id) + "/" + str(employee_id)+".pdf"
 
             data_file = MinioHandler().get_instance().put_object(
                 file_name=file_name,
-                file_data=BytesIO(data),
-                content_type="pdf"
+                file_data=data,
+                content_type="application/x-pdf"
             )
-            return Response({"message": "Upload CV Sucessfully", "status": 200})
+            return Response({"message": data_file, "status": 200})
         
         except Exception as e:
             raise e
